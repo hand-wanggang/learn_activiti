@@ -86,6 +86,8 @@
 
 **二、完整的Activi流程**
 
+demo的git地址:[https://github.com/hand-wanggang/activiti-demo.git](https://github.com/hand-wanggang/activiti-demo.git)
+
 1、流程模型的设计
 
 流程的模型设计，可以通过XML文件的方式来设计（比较复杂）也可以通过可视化的流程设计器来实现。
@@ -168,7 +170,7 @@ ProcessInstance rpi = processEngine.getRuntimeService()//
                 .createProcessInstanceQuery()//创建流程实例查询对象
                 .processInstanceId(pi.getId())
                 .singleResult();
-// 如果rpi为空则表示流程结束，否则还未结束                
+// 如果rpi为空则表示流程结束，否则还未结束
 ```
 
 
