@@ -105,19 +105,19 @@ repositoryService.createDeployment()
 * [ ] 通过输入流的形式来部署
 
 ```
-	@GetMapping("/deploy/{modelId}")
-	public void deploy(@PathVariable("modelId") String modelId) throws IOException {
-		Model modelData = repositoryService.getModel(modelId);
-		ObjectNode modelNode = (ObjectNode) new ObjectMapper()
-				.readTree(repositoryService.getModelEditorSource(modelData.getId()));
-		byte[] bpmnBytes = null;
-		BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
-		bpmnBytes = new BpmnXMLConverter().convertToXML(model);
-		String processName = modelData.getName() + ".bpmn20.xml";
-		System.out.println(new String(bpmnBytes,"UTF-8"));
-		repositoryService.createDeployment().name(modelData.getName())
-				.addString(processName, new String(bpmnBytes, "UTF-8")).deploy();
-	}
+    @GetMapping("/deploy/{modelId}")
+    public void deploy(@PathVariable("modelId") String modelId) throws IOException {
+        Model modelData = repositoryService.getModel(modelId);
+        ObjectNode modelNode = (ObjectNode) new ObjectMapper()
+                .readTree(repositoryService.getModelEditorSource(modelData.getId()));
+        byte[] bpmnBytes = null;
+        BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
+        bpmnBytes = new BpmnXMLConverter().convertToXML(model);
+        String processName = modelData.getName() + ".bpmn20.xml";
+        System.out.println(new String(bpmnBytes,"UTF-8"));
+        repositoryService.createDeployment().name(modelData.getName())
+                .addString(processName, new String(bpmnBytes, "UTF-8")).deploy();
+    }
 ```
 
 3、根据流程定义启动流程实例
@@ -146,6 +146,22 @@ List<Task> tasks = taskService.createTaskQuery().taskCandidateGroup("accountancy
 ```
 
 * [ ] 执行流程任务
+
+```
+taskService.complete(task.getId()); // 完成任务，也可以在完成任务前获取任务节点的表单
+
+
+// 获取节点的表单
+@GetMapping("/form")
+public ResponseEntity taskForm(@RequestParam String taskId) {
+		List<ReadOnlyFormData> data = dynamicFormPropertiesAndValue(taskId);
+		List<FormProperty> properties = formService.getTaskFormData(taskId).getFormProperties();
+		FormData formData = new FormData();
+		formData.setRead(data);
+		formData.setWrite(properties);
+		return ResponseEntity.ok(formData);
+}
+```
 
 
 
