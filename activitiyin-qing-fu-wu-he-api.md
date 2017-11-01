@@ -1,6 +1,6 @@
 # Activiti的引擎、服务和API
 
-一、activiti的引擎和服务结构![](/assets/import-engine-1.png)1、ProcessEngineConfiguration为初始化ProcessEngine提供了配置，以下是ProcessEngineConfiguration的配置：
+**一、activiti的引擎和服务结构**![](/assets/import-engine-1.png)1、ProcessEngineConfiguration为初始化ProcessEngine提供了配置，以下是ProcessEngineConfiguration的配置：
 
 ```
 #配置数据源
@@ -51,11 +51,11 @@
 
 * 查询引擎中的发布包和流程定义。
 
-*  暂停或激活发布包，对应全部和特定流程定义。 暂停意味着它们不能再执行任何操作了，激活是对应的反向操作。
+* 暂停或激活发布包，对应全部和特定流程定义。 暂停意味着它们不能再执行任何操作了，激活是对应的反向操作。
 
-*  获得多种资源，像是包含在发布包里的文件， 或引擎自动生成的流程图。
+* 获得多种资源，像是包含在发布包里的文件， 或引擎自动生成的流程图。
 
-*  获得流程定义的pojo版本， 可以用来通过java解析流程，而不必通过xml。
+* 获得流程定义的pojo版本， 可以用来通过java解析流程，而不必通过xml。
 
 3、RuntimeService的基本功能
 
@@ -84,29 +84,68 @@
 * 任务完成时间
 * 每个流程实例的执行路径
 
+**二、完整的Activi流程**
+
+1、流程模型的设计
+
+流程的模型设计，可以通过XML文件的方式来设计（比较复杂）也可以通过可视化的流程设计器来实现。
+
+2、流程模型的部署
+
+* [ ] 通过文件的方式部署
+
+```
+repositoryService.createDeployment()
+  .name("expense-process.bar")
+  .addClasspathResource("org/activiti/expenseProcess.bpmn20.xml")
+  .addClasspathResource("org/activiti/expenseProcess.png")
+  .deploy();
+```
+
+* [ ] 通过输入流的形式来部署
+
+```
+	@GetMapping("/deploy/{modelId}")
+	public void deploy(@PathVariable("modelId") String modelId) throws IOException {
+		Model modelData = repositoryService.getModel(modelId);
+		ObjectNode modelNode = (ObjectNode) new ObjectMapper()
+				.readTree(repositoryService.getModelEditorSource(modelData.getId()));
+		byte[] bpmnBytes = null;
+		BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
+		bpmnBytes = new BpmnXMLConverter().convertToXML(model);
+		String processName = modelData.getName() + ".bpmn20.xml";
+		System.out.println(new String(bpmnBytes,"UTF-8"));
+		repositoryService.createDeployment().name(modelData.getName())
+				.addString(processName, new String(bpmnBytes, "UTF-8")).deploy();
+	}
+```
+
+3、根据流程定义启动流程实例
+
+* [ ] 使用runtimeService.startProcessInstanceByKey启动
+
+```
+ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("financialReport");
+```
+
+* [ ] 使用FormService的submitStartFormData来启动
+
+```
+ProcessInstance instance = formService.submitStartFormData(processDefinitionId, values);
+```
+
+4、获取和执行流程任务
+
+* [ ] 查询流程任务
+
+```
+List<Task> tasks = taskService.createTaskQuery().taskCandidateUser("kermit").list();// 查询个人任务
 
 
+List<Task> tasks = taskService.createTaskQuery().taskCandidateGroup("accountancy").list();// 用户组任务
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+* [ ] 执行流程任务
 
 
 
