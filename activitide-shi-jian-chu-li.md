@@ -112,7 +112,7 @@ activiti支持的事件类型在org.activiti.engine.delegate.event.ActivitiEvent
 ```
 <definitions... >
         <!-- declaration of the signal -->
-        <signal id="alertSignal" name="alert" />              <!--定义信号-->
+        <signal id="alertSignal" name="alert" />                         <!--定义信号-->
 
         <process id="catchSignal">
                 <intermediateThrowEvent id="throwSignalEvent" name="Alert">
@@ -128,28 +128,6 @@ activiti支持的事件类型在org.activiti.engine.delegate.event.ActivitiEvent
         </process>
 </definitions>
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
