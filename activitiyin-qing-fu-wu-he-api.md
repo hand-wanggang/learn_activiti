@@ -154,13 +154,21 @@ taskService.complete(task.getId()); // 完成任务，也可以在完成任务�
 // 获取节点的表单
 @GetMapping("/form")
 public ResponseEntity taskForm(@RequestParam String taskId) {
-		List<ReadOnlyFormData> data = dynamicFormPropertiesAndValue(taskId);
-		List<FormProperty> properties = formService.getTaskFormData(taskId).getFormProperties();
-		FormData formData = new FormData();
-		formData.setRead(data);
-		formData.setWrite(properties);
-		return ResponseEntity.ok(formData);
+        List<ReadOnlyFormData> data = dynamicFormPropertiesAndValue(taskId);
+        List<FormProperty> properties = formService.getTaskFormData(taskId).getFormProperties();
+        FormData formData = new FormData();
+        formData.setRead(data);
+        formData.setWrite(properties);
+        return ResponseEntity.ok(formData);
 }
+
+
+// 判断一个流程是否结束
+ProcessInstance rpi = processEngine.getRuntimeService()//
+                .createProcessInstanceQuery()//创建流程实例查询对象
+                .processInstanceId(pi.getId())
+                .singleResult();
+// 如果rpi为空则表示流程结束，否则还未结束                
 ```
 
 
