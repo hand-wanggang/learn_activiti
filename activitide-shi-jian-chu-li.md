@@ -91,6 +91,64 @@ activiti支持的事件类型在org.activiti.engine.delegate.event.ActivitiEvent
 * timeDuration-更具时间间隔触发
 * timeCycle-使用重复执行间隔（可用Corn表达式指定）
 
+注意：以上这些方式的参数都可以通过流程中的变量来设置，以达到动态的效果。
+
+3、错误事件的定义
+
+```
+<endEvent id="myErrorEndEvent">
+  <errorEventDefinition errorRef="myError" />
+</endEvent>
+```
+
+引用相同error元素的错误事件处理器会捕获这个错误。本例中应用额错误是"myError"。
+
+4、信号事件定义
+
+信号事件会引用一个已命名的信号，信号全局范围的时间（广播）。会发送给所有激活的处理器。
+
+下面的流程实例会抛出一个信号并被中间事件捕获
+
+```
+<definitions... >
+        <!-- declaration of the signal -->
+        <signal id="alertSignal" name="alert" />              <!--定义信号-->
+
+        <process id="catchSignal">
+                <intermediateThrowEvent id="throwSignalEvent" name="Alert">
+                        <!-- signal event definition -->
+                        <signalEventDefinition signalRef="alertSignal" /> <!--抛出信号-->
+                </intermediateThrowEvent>
+                ...
+                <intermediateCatchEvent id="catchSignalEvent" name="On Alert">
+                        <!-- signal event definition -->
+                        <signalEventDefinition signalRef="alertSignal" /> <!--捕获信号-->
+                </intermediateCatchEvent>
+                ...
+        </process>
+</definitions>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
