@@ -129,7 +129,7 @@ activiti支持的事件类型在org.activiti.engine.delegate.event.ActivitiEvent
 </definitions>
 ```
 
-5、触发事件的定义
+5、触发信号事件
 
 信号的触发可以由流程实例的结点触发，也可以通过API触发
 
@@ -138,6 +138,28 @@ RuntimeService.signalEventReceived(String signalName);   // 发送给全局的�
 
 RuntimeService.signalEventReceived(String signalName, String executionId); // 发送给局部的处理器
 ```
+
+6、信号事件的捕获
+
+信号事件可以被中间捕获信号事件或者边界事件捕获。
+
+7、查询信号事件的订阅
+
+```
+List<Execution> executions = runtimeService.createExecutionQuery().signalEventSubscriptionName("alert");
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
