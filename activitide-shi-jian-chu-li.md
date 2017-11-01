@@ -1,6 +1,6 @@
 # Activiti的事件处理
 
-一、activiti支持的事件类型
+**一、activiti支持的事件类型**
 
 activiti支持的事件类型在org.activiti.engine.delegate.event.ActivitiEventType中利用枚举值的方式列出。常用的事件类型有：
 
@@ -24,7 +24,7 @@ activiti支持的事件类型在org.activiti.engine.delegate.event.ActivitiEvent
 
 10、TASK\_TIMEOUT 任务超时
 
-二、监听器的实现
+**二、监听器的实现**
 
 通过实现org.activiti.engine.delegate.event.ActivitiEventListener接口，可以实现一个监听器。
 
@@ -76,21 +76,20 @@ activiti支持的事件类型在org.activiti.engine.delegate.event.ActivitiEvent
     void removeEventListener(ActivitiEventListener var1);
 ```
 
+**三、事件**
 
+1、在BPMN中事件被分为两大类：捕获和触发。
 
+* 捕获事件：当执行到某个流程，事件会等待被触发（如：超时事件、边界出错事件）
+* 触发时间：当执行到某个流程是，触发事件（如：执行完成事件、终止事件）
 
+2、定时器事件的定义（定时器时间可用于开始事件、中间事件、边界事件）
 
+定时器事件的触发方式：
 
-
-
-
-
-
-
-
-
-
-
+* timeDate-根据特定的时间进行触发
+* timeDuration-更具时间间隔触发
+* timeCycle-使用重复执行间隔（可用Corn表达式指定）
 
 
 
