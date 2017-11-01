@@ -146,8 +146,127 @@ RuntimeService.signalEventReceived(String signalName, String executionId); // �
 7、查询信号事件的订阅
 
 ```
-List<Execution> executions = runtimeService.createExecutionQuery().signalEventSubscriptionName("alert");
+List<Execution> executions = runtimeService.createExecutionQuery().signalEventSubscriptionName("alert").list();
 ```
+
+8、信号事件的范围
+
+默认信号会在流程引擎范围内进行广播。也就是说，在流程实例A中抛出一个信号事件，其他不同的流程B和C都可以监听到这个事件。
+
+```
+<signal id="alertSignal" name="alert" activiti:scope"processInstance"/>// 定义信号时设置信号的传播范围为实例流程内
+```
+
+9、消息事件的定义
+
+* 消息事件的定义需要引用一个命名的消息
+* 每个消息都必须有名称和内容
+* 消息事件总会直接发送给一个接受者
+
+```
+<definitions id="definitions"
+  xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:activiti="http://activiti.org/bpmn"
+  targetNamespace="Examples"
+  xmlns:tns="Examples">
+
+  <message id="newInvoice" name="newInvoiceMessage" />  <!--定义消息-->
+  <message id="payment" name="paymentMessage" />        <!--定义消息-->
+
+  <process id="invoiceProcess">
+
+    <startEvent id="messageStart" >
+        <messageEventDefinition messageRef="newInvoice" /> <!--定义消息事件-->
+    </startEvent>
+    ...
+    <intermediateCatchEvent id="paymentEvt" >
+        <messageEventDefinition messageRef="payment" />  <!--消息捕获-->
+    </intermediateCatchEvent>
+    ...
+  </process>
+
+</definitions>
+```
+
+10、触发消息事件
+
+* 如果消息应该启动触发一个新流程，则使用以下方法，触发消息事件
+
+```
+ProcessInstance startProcessInstanceByMessage(String messageName);
+ProcessInstance startProcessInstanceByMessage(String messageName, Map<String, Object> processVariables);
+ProcessInstance startProcessInstanceByMessage(String messageName, String businessKey, Map<String, Object> processVariables);
+```
+
+* 如果消息要在已经运行的实例中处理，则使用下面的方法触发事件
+
+```
+void messageEventReceived(String messageName, String executionId);
+void messageEventReceived(String messageName, String executionId, HashMap<String, Object> processVariables);
+```
+
+11、查询消息事件的订阅
+
+activiti支持消息开始事件和中间消息事件
+
+* 消息开始事件的订阅查询
+
+```
+ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
+      .messageEventSubscription("newCallCenterBooking")
+      .singleResult();
+```
+
+* 中间消息事件的订阅查询
+
+```
+Execution execution = runtimeService.createExecutionQuery()
+      .messageEventSubscriptionName("paymentReceived")
+      .variableValueEquals("orderId", message.getOrderId())
+      .singleResult();
+```
+
+12、空开始事件
+
+空开始事件表示流程定义时没有指定启动流程的触发事件，流程的启动必须通过api接口实现。
+
+13、定时开始事件
+
+指定某个事件点创建流程实例，或者设定时间间隔来多次启动流程。
+
+注意：
+
+* 子流程不能使用定时开始事件
+* 定时开始事件在流程发布后开始计算时间。
+* 当流程部署新的版本时，旧的定时器将被删除，新的计时器开始计时。
+
+14、消息开始事件
+
+使用一个命名的消息来启动流程实例，可以通过使用消息名称来选择正确的开始事件。
+
+注意事项：
+
+* 消息开始事件的名称必须唯一，否则通过消息开始流程实例时activiti会抛出异常。
+* 消息开始事件名称在所有已发布的流程定义中不能重复，否则通过消息开始流程实例时activiti会抛出异常。
+* 流程版本，在发布新版本的流程定义时，之前订阅的消息订阅将会被取消，即便新版本中没有消息事件也会这样处理。
+
+通过消息开启流程实例的api：
+
+```
+ProcessInstance startProcessInstanceByMessage(String messageName);
+ProcessInstance startProcessInstanceByMessage(String messageName, Map<String, Object> processVariables);
+ProcessInstance startProcessInstanceByMessage(String messageName, String businessKey, Map<String, Object< processVariables);
+```
+
+注意：
+
+* 消息开始事件只支持顶级流程，不支持内嵌子流程。
+* 如果流程定义有多个消息开始事件和一个空开始事件，runtimeService.startProcessInstancdByKey\(...\)和runtimeService.startProcessInstanceById\(...\)会使用空开始事件启动流程实例。
+* 如果流程定义没有空开始事件且有多个消息开始事件，使用runtimeService.startProcessInstancdByKey\(...\)和runtimeService.startProcessInstanceById\(...\)会抛出异常。
+* 如果流程定义只有一个消息开始事件，runtimeService.startProcessInstancdByKey\(...\)和runtimeService.startProcessInstanceById\(...\)会使用这个消息开始事件启动流程实例。
+* 如果流程被调用环节启动（callActivity），消息开始事件只支持【1：在消息开始事件以外，还有一个单独的空开始事件】【2：只有一个消息开始事件，没有空开始事件】
+
+
 
 
 
