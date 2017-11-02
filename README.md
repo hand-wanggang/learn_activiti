@@ -694,27 +694,5 @@ activiti的持久层框架使用的是mybatis。支持的数据库：DB2、H2、
 |  | ACT\_RU\_TASK | 运行时任务 |
 |  | ACT\_RU\_VARIABLE | 运行时变量表 |
 
-更具体的信息参照:http://blog.csdn.net/hj7jay/article/details/51302829
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
