@@ -646,6 +646,74 @@ ProcessInstance startProcessInstanceByMessage(String messageName, String busines
 
 # chapter5：Activiti的数据表及其用处
 
+activiti的持久层框架使用的是mybatis。支持的数据库：DB2、H2、Oracle、MySQL、MS SQL、PostgerSQL等。
+
+**一、数据库表的命名规程**
+
+1、历史信息等级对数据表的影响
+
+默认情况下activiti会在数据库中生成23张表，那是因为它的默认历史信息等级为audit。这种历史等级下，不会创建**ACT\_HI\_VARIABLE**和**ACT\_HI\_VARINST**表，这两张表保存中流程中每一个节点涉及到的变量及其值。
+
+2、Activiti中标的规则
+
+* **ACT\_RE\_**\*: 'RE'表示repository。 这个前缀的表包含了流程定义和流程静态资源 （图片，规则，等等）。
+
+* **ACT\_RU\_**\*: 'RU'表示runtime。 这些运行时的表，包含流程实例，任务，变量，异步任务，等运行中的数据。 Activiti只在流程实例执行过程中保存这些数据， 在流程结束时就会删除这些记录。 这样运行时表可以一直很小速度很快。
+
+* **ACT\_ID\_**\*: 'ID'表示identity。 这些表包含身份信息，比如用户，组等等。
+
+* **ACT\_HI\_**\*: 'HI'表示history。 这些表包含历史数据，比如历史流程实例， 变量，任务等等。
+
+* **ACT\_GE\_**\*: 通用数据， 用于不同场景下。
+
+**二、不同表的作用说明**
+
+|  | **表名** | **解释** |
+| :--- | :--- | :--- |
+| 一般数据 | ACT\_GE\_BYTEARRAY | 通用的流程定义和流程资源 |
+|  | ACT\_GE\_PROPERTY | 系统相关属性 |
+| 流程历史记录 | ACT\_HI\_ACTINST | 历史的流程实例 |
+|  | ACT\_HI\_ATTACHMENT | 历史的流程附件 |
+|  | ACT\_HI\_COMMENT | 历史的说明性信息 |
+|  | ACT\_HI\_DETAIL | 历史的流程运行中的细节信息 |
+|  | ACT\_HI\_IDENTITYLINK | 历史的流程运行过程中用户关系 |
+|  | ACT\_HI\_PROCINST | 历史的流程实例 |
+|  | ACT\_HI\_TASKINST | 历史的任务实例 |
+|  | ACT\_HI\_VARINST | 历史的流程运行中的变量信息 |
+| 用户用户组表 | ACT\_ID\_GROUP | 身份信息-组信息 |
+|  | ACT\_ID\_INFO | 身份信息-组信息 |
+|  | ACT\_ID\_MEMBERSHIP | 身份信息-用户和组关系的中间表 |
+|  | ACT\_ID\_USER | 身份信息-用户信息 |
+| 流程定义表 | ACT\_RE\_DEPLOYMENT | 部署单元信息 |
+|  | ACT\_RE\_MODEL | 模型信息 |
+|  | ACT\_RE\_PROCDEF | 已部署的流程定义 |
+| 运行实例表 | ACT\_RU\_EVENT\_SUBSCR | 运行时事件 |
+|  | ACT\_RU\_EXECUTION | 运行时流程执行实例 |
+|  | ACT\_RU\_IDENTITYLINK | 运行时用户关系信息 |
+|  | ACT\_RU\_JOB | 运行时作业 |
+|  | ACT\_RU\_TASK | 运行时任务 |
+|  | ACT\_RU\_VARIABLE | 运行时变量表 |
+
+更具体的信息参照:http://blog.csdn.net/hj7jay/article/details/51302829
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
